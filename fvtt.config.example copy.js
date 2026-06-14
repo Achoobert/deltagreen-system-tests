@@ -14,7 +14,7 @@
  */
 
 const developmentOptions = {
-  userDataPath: 'PATH_TO_FOUNDRY_DATA_FOLDER',
+  userDataPath: '/Users/achoobert/foundrydata',
   baseURL: 'http://localhost:30000'
 }
 

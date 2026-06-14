@@ -7,7 +7,6 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import developmentOptions from './fvtt.config.js'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
-import WebpackBar from 'webpackbar'
 
 const rootFolder = path.dirname(fileURLToPath(import.meta.url))
 
@@ -77,7 +76,7 @@ const optimization =
           cacheGroups: {
             default: {
               name: 'main',
-              test: 'module/coc7.js'
+              test: 'module/deltagreen.js'
             }
           }
         }
@@ -91,7 +90,7 @@ const optimization =
 const bundleScript = {
   bail: buildMode === 'production',
   context: rootFolder,
-  entry: './module/src/coc7.js',
+  entry: './module/src/deltagreen.js',
   devtool: 'inline-source-map',
   mode: buildMode,
   module: {
@@ -136,8 +135,7 @@ const bundleScript = {
     new MiniCssExtractPlugin({
       filename: 'module.css',
       insert: 'head'
-    }),
-    new WebpackBar({})
+    })
   ],
   resolve: {
     extensions: ['.js']

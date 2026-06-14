@@ -1,7 +1,7 @@
 {
-  "name": "fvtt-coc7-system-tests",
+  "name": "fvtt-deltagreen-system-tests",
   "version": "0.0.0",
-  "description": "Test suite to run Quench tests in game on the CoC7 System",
+  "description": "Test suite to run Quench tests in game on the Delta Green System",
   "scripts": {
     "build": "webpack --mode production",
     "format": "standard --fix",

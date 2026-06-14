@@ -1,7 +1,7 @@
 {
-  "id": "coc7-system-tests",
-  "title": "CoC7 System Tests",
-  "description": "Test suite to run Quench tests in game on the CoC7 System",
+  "id": "deltagreen-system-tests",
+  "title": "Delta Green System Tests",
+  "description": "Test suite to run Quench tests in game on the Delta Green system",
   "authors": [
     {
       "name": "Miskatonic Investigative Society"
@@ -12,15 +12,15 @@
   ],
   "version": "0.0.1",
   "compatibility": {
-    "minimum": "10",
-    "verified": "10"
+    "minimum": "13",
+    "verified": "14"
   },
   "relationships": {
     "requires": [
       {
-        "id": "coc7",
+        "id": "deltagreen",
         "type": "system",
-        "reason": "Test suite for CoC7 system."
+        "reason": "Test suite for the Delta Green system."
       },
       {
         "id": "quench",

@@ -1,15 +1,15 @@
-# CoC7 Tests Module
+# Delta Green System Tests Module
 
 ## Setup
 - Run `npm install`
-- Follow instructions in [fvtt.config.example.js](./fvtt.config.example.js)
+- Copy [`fvtt.config.example copy.js`](./fvtt.config.example%20copy.js) to `fvtt.config.js` and set `userDataPath` / `baseURL` for your Foundry install
 - Run `npm run build` or `npm run watch`
 - Run Foundry
-- Install additionally required module [FVTT Quench](https://github.com/Ethaks/FVTT-Quench)
-- Create a new world for [CoC7](https://github.com/Miskatonic-Investigative-Society/CoC7-FoundryVTT)
-- Mark both Quench and this module as used
-- Check if `baseUrl` in `cypress.config.js` matches your URL (TODO: make this easier)
+- Install the [Quench](https://foundryvtt.com/packages/quench) module
+- Create a new world using the [Delta Green](https://github.com/deltagreen-foundryvtt/delta-green-foundry-vtt-system) system
+- Enable Quench and this module in the world
+- Check that `baseURL` in `fvtt.config.js` (used by `cypress.config.js`) matches your Foundry URL
 
 ## Running tests
-- Run component tests through UI by clicking the `Quench` button
-- Run `Cypress` tests by calling `npx cypress open` and opening the E2E browser tests in Chrome
+- Run Quench in-game tests from the **Quench** sidebar button
+- Run Cypress E2E tests with `npm run tests` (or `npx cypress open`) and open the browser tests in Chrome against a logged-in DG world
