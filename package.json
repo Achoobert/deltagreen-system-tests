@@ -29,6 +29,8 @@
     "thread-loader": "^3.0.4",
     "webpack": "^5.76.1",
     "webpack-cli": "^5.0.1",
-    "webpackbar": "^5.0.2"
+    "webpackbar": "^5.0.2",
+    "cypress-if": "^1.13.2",
+    "eslint": "^9.30.1"
   }
 }
