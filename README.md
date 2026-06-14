@@ -31,4 +31,5 @@
 
 ## Running tests
 - In-world: **Quench** sidebar → run selected batches
-- Cypress E2E: `npm run tests` (create-agent smoke only today)
+- Cypress E2E (interactive): `npm run tests` (create-agent smoke only today)
+- Cypress E2E (headless / CI): `npm run tests:ci` (Foundry must be running; same world setup as interactive Cypress)

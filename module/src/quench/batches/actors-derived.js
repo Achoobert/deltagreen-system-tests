@@ -27,7 +27,7 @@ export default function register (quench) {
           try {
             assert.isTrue(actor.system.skills.unnatural.cannotBeImprovedByFailure)
             // actor.system.skills.luck
-            // note that luck is not a skill 
+            // note that luck is not a skill
             assert.isFalse(actor.system.skills.alertness.cannotBeImprovedByFailure)
           } finally {
             await actor.delete()

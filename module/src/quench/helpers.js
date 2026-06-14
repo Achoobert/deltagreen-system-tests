@@ -1,4 +1,4 @@
-/* global Actor, Item, CONFIG, game */
+/* global Actor, CONFIG, game */
 
 export const ACTOR_SMOKE = [
   {

@@ -19,20 +19,35 @@ export default function register (quench) {
                 '/systems/deltagreen/module/active-effect/runtime/stimulant-effect.js'
               )
             await applyStimulantEffect(actor, 1)
-            assert.isAtLeast(
-              actor.effects.filter((e) => e.getFlag('deltagreen', 'stimulant'))
-                .length,
-              1
+            let stimulant = actor.effects.find((e) =>
+              e.getFlag('deltagreen', 'stimulant')
+            )
+            assert.isOk(stimulant)
+
+            const expiredStart = game.time.worldTime - 7200
+            await stimulant.update({
+              start: { time: expiredStart },
+              duration: { value: 1, units: 'hours' }
+            })
+            stimulant = actor.effects.get(stimulant.id) ?? stimulant
+            stimulant.updateDuration()
+
+            if (!stimulant.duration?.expired) {
+              await stimulant.update({
+                startTime: expiredStart,
+                duration: { seconds: 3600 }
+              })
+              stimulant = actor.effects.get(stimulant.id) ?? stimulant
+              stimulant.updateDuration()
+            }
+
+            assert.isTrue(
+              stimulant.duration?.expired,
+              'stimulant AE should be expired before prune'
             )
 
             if (typeof game.time.advance === 'function') {
               await game.time.advance(3660)
-            }
-
-            for (const effect of actor.effects.filter((e) =>
-              e.getFlag('deltagreen', 'stimulant')
-            )) {
-              effect.updateDuration()
             }
 
             await pruneExpiredStimulantEffects(actor)

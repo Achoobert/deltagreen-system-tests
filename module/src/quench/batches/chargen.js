@@ -1,4 +1,3 @@
-/* global game */
 import { createTestAgent, dgImport } from '../helpers.js'
 
 export default function register (quench) {
