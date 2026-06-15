@@ -47,7 +47,7 @@ Cypress.Commands.add('loginViaUi', (user) => {
 
 Cypress.Commands.add('turnOffWarningsIfTheyExist', () => {
   cy.get('#notifications').then((notifications) => {
-    const buttons = notifications.find('li.notification i')
+    const buttons = notifications.find('li.notification')
     if (buttons.length) {
       buttons.trigger('click')
     }

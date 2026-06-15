@@ -12,5 +12,5 @@ export default defineConfig({
     baseUrl: baseURL
   },
   viewportWidth: 1024,
-  viewportHeight: 700
+  viewportHeight: 768
 })

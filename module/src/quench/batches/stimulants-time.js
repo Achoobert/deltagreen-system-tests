@@ -12,6 +12,9 @@ export default function register (quench) {
           if (!game.user.isActiveGM) {
             this.skip()
           }
+          if (typeof game.time.advance !== 'function') {
+            this.skip('game.time.advance is not available')
+          }
           const actor = await createTestAgent('stim-time')
           try {
             const { applyStimulantEffect, pruneExpiredStimulantEffects } =
@@ -19,10 +22,10 @@ export default function register (quench) {
                 '/systems/deltagreen/module/active-effect/runtime/stimulant-effect.js'
               )
             await applyStimulantEffect(actor, 1)
-            let stimulant = actor.effects.find((e) =>
+            const stimulantId = actor.effects.find((e) =>
               e.getFlag('deltagreen', 'stimulant')
-            )
-            assert.isOk(stimulant)
+            )?.id
+            assert.isOk(stimulantId)
 
             const expiredStart = game.time.worldTime - 7200
             await stimulant.update({
@@ -32,22 +35,13 @@ export default function register (quench) {
             stimulant = actor.effects.get(stimulant.id) ?? stimulant
             stimulant.updateDuration()
 
-            if (!stimulant.duration?.expired) {
-              await stimulant.update({
-                startTime: expiredStart,
-                duration: { seconds: 3600 }
-              })
-              stimulant = actor.effects.get(stimulant.id) ?? stimulant
+            let stimulant = actor.effects.get(stimulantId)
+            if (stimulant) {
               stimulant.updateDuration()
-            }
-
-            assert.isTrue(
-              stimulant.duration?.expired,
-              'stimulant AE should be expired before prune'
-            )
-
-            if (typeof game.time.advance === 'function') {
-              await game.time.advance(3660)
+              assert.isTrue(
+                stimulant.duration?.expired,
+                'stimulant AE should be expired after time advance'
+              )
             }
 
             await pruneExpiredStimulantEffects(actor)

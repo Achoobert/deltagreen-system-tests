@@ -2,3 +2,4 @@ node_modules/
 *.todo
 fvtt.config.js
 package-lock.json
+screenshots/
