@@ -72,6 +72,20 @@ export async function createTestAgent (label) {
   })
 }
 
+export async function createTestNpc(label) {
+  return Actor.create({
+    name: 'Quench ' + label + ' ' + foundry.utils.randomID(),
+    type: 'npc'
+  })
+}
+
+export async function createTestUnnatural(label) {
+  return Actor.create({
+    name: 'Quench ' + label + ' ' + foundry.utils.randomID(),
+    type: 'unnatural'
+  })
+}
+
 export async function withFixedD100 (result, fn) {
   const prior = CONFIG.Dice.randomUniform
   CONFIG.Dice.randomUniform = () => (result - 0.5) / 100

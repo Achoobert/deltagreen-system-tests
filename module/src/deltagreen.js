@@ -12,6 +12,8 @@ import registerChargen from './quench/batches/chargen.js'
 import registerCompendiums from './quench/batches/compendiums.js'
 import registerStimulantsTime from './quench/batches/stimulants-time.js'
 import registerApi from './quench/batches/api.js'
+import registerRegressions from './quench/batches/regressions.js'
+import registerKnownBugs from './quench/batches/known-bugs.js'
 
 const BATCH_REGISTRARS = [
   registerActorsSmoke,
@@ -26,7 +28,9 @@ const BATCH_REGISTRARS = [
   registerChargen,
   registerCompendiums,
   registerStimulantsTime,
-  registerApi
+  registerApi,
+  registerRegressions,
+  registerKnownBugs
 ]
 
 Hooks.on('quenchReady', (quench) => {

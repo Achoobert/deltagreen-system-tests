@@ -56,8 +56,12 @@ running `npm run tests`:
 | `deltagreen.compendiums` | Firearms, armor, unarmed packs |
 | `deltagreen.stimulants.time` | Stimulant expiry after time advance (**active GM only**) |
 | `deltagreen.api` | `game.deltagreen` surface |
+| `deltagreen.regressions` | Closed-issue regression guards (GitHub #359, #363, #327, #328, #296, #382, #383) |
+| `deltagreen.known-bugs` | Open issues expected to fail until fixed (#388, #231) |
 
 **Notes:** Compendium tests require system packs (`deltagreen.firearms`, etc.). The stimulant time batch skips for non-GM users; calendar modules are not required for the basic `game.time.advance` check.
+
+Issues that are poor Quench fits (#392, #393, #357, #396) are listed in [docs/QUENCH_UI_DEFERRED.md](./docs/QUENCH_UI_DEFERRED.md).
 
 ## Running tests
 - In-world: **Quench** sidebar → run selected batches
