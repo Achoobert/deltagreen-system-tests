@@ -1,5 +1,5 @@
 /* global Actor */
-import { ACTOR_SMOKE } from '../helpers.js'
+import { ACTOR_SMOKE, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -8,6 +8,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Actor creation', function () {
+        useQuenchTimeout(this)
+
         for (const spec of ACTOR_SMOKE) {
           it('creates a ' + spec.type + ' actor', async function () {
             const name = 'Quench ' + spec.type + ' ' + foundry.utils.randomID()

@@ -1,5 +1,19 @@
 /* global Actor, CONFIG, game */
 
+/** CI (software WebGL + dockerized Foundry) makes Actor/Item DB ops slow; bump Mocha's 2000ms default. */
+export const QUENCH_DEFAULT_TIMEOUT_MS = 30000
+
+/**
+ * Call inside a describe/it body declared with `function () {}` (not arrow),
+ * so `this` is the Mocha context.
+ */
+export function useQuenchTimeout (mochaCtx, ms = QUENCH_DEFAULT_TIMEOUT_MS) {
+  if (mochaCtx && typeof mochaCtx.timeout === 'function') {
+    mochaCtx.timeout(ms)
+  }
+  return ms
+}
+
 export const ACTOR_SMOKE = [
   {
     type: 'agent',

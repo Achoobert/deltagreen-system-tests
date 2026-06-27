@@ -1,4 +1,4 @@
-import { addBondToActor, bondScoreFromActor, createTestAgent } from '../helpers.js'
+import { addBondToActor, bondScoreFromActor, createTestAgent, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -7,6 +7,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Bond lifecycle', function () {
+        useQuenchTimeout(this)
+
         it('add bond', async function () {
           const actor = await createTestAgent('bond-add')
           try {

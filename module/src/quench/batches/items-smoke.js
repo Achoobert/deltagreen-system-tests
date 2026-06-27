@@ -1,5 +1,5 @@
 /* global Item */
-import { ITEM_SMOKE } from '../helpers.js'
+import { ITEM_SMOKE, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -8,6 +8,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Item creation', function () {
+        useQuenchTimeout(this)
+
         for (const spec of ITEM_SMOKE) {
           it('creates a ' + spec.type + ' item', async function () {
             const name = 'Quench ' + spec.type + ' ' + foundry.utils.randomID()

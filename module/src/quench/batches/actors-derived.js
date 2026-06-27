@@ -1,4 +1,4 @@
-import { createTestAgent } from '../helpers.js'
+import { createTestAgent, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -7,6 +7,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Agent derived data', function () {
+        useQuenchTimeout(this)
+
         it('updates statistics and derived combat values', async function () {
           const actor = await createTestAgent('derived')
           try {
