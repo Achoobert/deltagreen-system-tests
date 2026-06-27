@@ -1,15 +1,15 @@
 /* global Hooks */
 import registerActorsSmoke from './quench/batches/actors-smoke.js'
 import registerItemsSmoke from './quench/batches/items-smoke.js'
-import registerActorsDerived from './quench/batches/actors-derived.js'
-import registerAgentBonds from './quench/batches/agent-bonds.js'
-import registerAgentCombat from './quench/batches/agent-combat.js'
-import registerRolls from './quench/batches/rolls.js'
+// import registerActorsDerived from './quench/batches/actors-derived.js'
+// import registerAgentBonds from './quench/batches/agent-bonds.js'
+// import registerAgentCombat from './quench/batches/agent-combat.js'
+// import registerRolls from './quench/batches/rolls.js'
 // import registerActiveEffects from './quench/batches/active-effects.js'
 // import registerPhysical from './quench/batches/physical.js'
 // import registerProse from './quench/batches/prose.js'
 // import registerChargen from './quench/batches/chargen.js'
-import registerCompendiums from './quench/batches/compendiums.js'
+// import registerCompendiums from './quench/batches/compendiums.js'
 // import registerStimulantsTime from './quench/batches/stimulants-time.js'
 // import registerApi from './quench/batches/api.js'
 // import registerRegressions from './quench/batches/regressions.js'
@@ -18,15 +18,15 @@ import registerCompendiums from './quench/batches/compendiums.js'
 const BATCH_REGISTRARS = [
   registerActorsSmoke,
   registerItemsSmoke,
-  registerActorsDerived,
-  registerAgentBonds,
-  registerAgentCombat,
-  registerRolls,
+  // registerActorsDerived,
+  // registerAgentBonds,
+  // registerAgentCombat,
+  // registerRolls,
   // registerActiveEffects,
   // registerPhysical,
   // registerProse,
   // registerChargen,
-  registerCompendiums,
+  // registerCompendiums,
   // registerStimulantsTime,
   // registerApi,
   // registerRegressions,
