@@ -1,4 +1,3 @@
-/* global Item */
 import { ITEM_SMOKE, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
@@ -24,6 +23,6 @@ export default function register (quench) {
         }
       })
     },
-    { displayName: 'Items: smoke', preSelected: false }
+    { displayName: 'Items: smoke' }
   )
 }

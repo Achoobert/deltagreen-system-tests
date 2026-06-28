@@ -1,5 +1,6 @@
 import {
   createTestAgent,
+  deleteTestActor,
   dgImport,
   getExhaustionEffect,
   importDgRolls
@@ -38,7 +39,7 @@ export default function register (quench) {
             )
             assert.equal(roll.rollTargetModifier, -20)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -73,7 +74,7 @@ export default function register (quench) {
             assert.isNotOk(getExhaustionEffect(actor))
             assert.equal(actor.system.wp.value, Math.min(maxWp, 6))
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -100,7 +101,7 @@ export default function register (quench) {
             const exhaustion = getExhaustionEffect(actor)
             assert.isTrue(exhaustion?.disabled)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

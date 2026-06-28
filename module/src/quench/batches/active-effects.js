@@ -1,6 +1,7 @@
 import {
   createActorEmbeddedEffect,
   createTestAgent,
+  deleteTestActor,
   dgImport
 } from '../helpers.js'
 
@@ -44,7 +45,7 @@ export default function register (quench) {
             )
             assert.equal(roll.rollTargetModifier, -10)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -70,7 +71,7 @@ export default function register (quench) {
             actor.reset()
             assert.equal(actor.system.health.max, baseMax + 3)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -107,7 +108,7 @@ export default function register (quench) {
             await motivation.update({ 'system.acuteEpisode': true })
             assert.isFalse(effect.isSuppressed)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

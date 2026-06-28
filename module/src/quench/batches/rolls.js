@@ -1,6 +1,7 @@
 import {
   addCompendiumItemToActor,
   createTestAgent,
+  deleteTestActor,
   evaluatePercentileRoll,
   importDgRolls,
   setWeaponCustomRollTarget
@@ -31,7 +32,7 @@ export default function register (quench) {
             assert.equal(roll.total, 30)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -58,7 +59,7 @@ export default function register (quench) {
             assert.equal(roll.effectiveTarget, 50)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -80,7 +81,7 @@ export default function register (quench) {
             assert.equal(roll.effectiveTarget, 60)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -101,7 +102,7 @@ export default function register (quench) {
             assert.equal(roll.total, 40)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

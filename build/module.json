@@ -1,0 +1,35 @@
+{
+  "id": "deltagreen-system-tests",
+  "title": "Delta Green System Tests",
+  "description": "Test suite to run Quench tests in game on the Delta Green system",
+  "authors": [
+    {
+      "name": "Miskatonic Investigative Society"
+    },
+    {
+      "name": "kwitczak"
+    }
+  ],
+  "version": "0.0.1",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14"
+  },
+  "relationships": {
+    "requires": [
+      {
+        "id": "deltagreen",
+        "type": "system",
+        "reason": "Test suite for the Delta Green system."
+      },
+      {
+        "id": "quench",
+        "type": "module",
+        "reason": "Process Tests powered by Mocha."
+      }
+    ]
+  },
+  "esmodules": [
+    "module.js"
+  ]
+}

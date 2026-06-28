@@ -1,4 +1,3 @@
-/* global CONFIG, game */
 import { EXPECTED_DG_API_KEYS } from '../helpers.js'
 
 export default function register (quench) {

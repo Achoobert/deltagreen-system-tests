@@ -1,4 +1,4 @@
-import { createTestAgent, useQuenchTimeout } from '../helpers.js'
+import { createTestAgent, deleteTestActor, settleAgentSideEffects, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -20,7 +20,7 @@ export default function register (quench) {
             assert.equal(actor.system.health.max, 13)
             assert.equal(actor.system.statistics.str.meleeDamageBonusFormula, '+1')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -32,7 +32,7 @@ export default function register (quench) {
             // note that luck is not a skill
             assert.isFalse(actor.system.skills.alertness.cannotBeImprovedByFailure)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -45,11 +45,12 @@ export default function register (quench) {
             })
             assert.isTrue(actor.system.sanity.breakingPointHit)
           } finally {
-            await actor.delete()
+            await settleAgentSideEffects(actor)
+            await deleteTestActor(actor)
           }
         })
       })
     },
-    { displayName: 'Actors: derived', preSelected: false }
+    { displayName: 'Actors: derived', preSelected: true }
   )
 }
