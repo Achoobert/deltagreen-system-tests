@@ -1,4 +1,4 @@
-import { dgImport } from '../helpers.js'
+import { dgImport, useQuenchTimeout } from '../helpers.js'
 
 /** @param {string[]} keys @param {number} value */
 function buildStatSpread (keys, value) {
@@ -12,6 +12,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Point-buy stat setup', function () {
+        useQuenchTimeout(this)
+
         it('getDefaultPointBuyValues starts at minimum with 54 points remaining', async function () {
           const {
             STAT_KEYS,
