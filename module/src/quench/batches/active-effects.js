@@ -119,7 +119,6 @@ export default function register (quench) {
           useQuenchTimeout(this)
           const actor = await createTestAgent('ae-manage')
           try {
-            await actor.sheet.render(true)
             const context = await actor.sheet._prepareContext({})
             assert.isTrue(
               context.canManageEffects,
@@ -129,7 +128,6 @@ export default function register (quench) {
             assert.isArray(context.sheetEffects.temporary)
             assert.isArray(context.sheetEffects.permanent)
           } finally {
-            await actor.sheet.close()
             await deleteTestActor(actor)
           }
         })

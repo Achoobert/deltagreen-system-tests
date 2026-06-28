@@ -18,69 +18,75 @@ export default function register (quench) {
   quench.registerBatch(
     'deltagreen.items.functional',
     (context) => {
-      const { describe, it, assert } = context
+      const { describe, it, assert, before, after, beforeEach } = context
 
       describe('Item behavior', function () {
         useQuenchTimeout(this)
 
+        let actor
+
+        before(async function () {
+          actor = await createTestAgent('item-functional-shared')
+          await waitForActorBootstrap(actor)
+        })
+
+        after(async function () {
+          await deleteTestActor(actor)
+        })
+
+        beforeEach(async function () {
+          const embedded = actor.items.filter(
+            (item) => item.getFlag('deltagreen', 'AutoAdded') !== true
+          )
+          if (embedded.length) {
+            await actor.deleteEmbeddedDocuments(
+              'Item',
+              embedded.map((item) => item.id)
+            )
+          }
+          actor.reset()
+        })
+
         it('weapon attack roll uses custom target', async function () {
           if (!packAvailable('deltagreen.firearms')) this.skip()
-          const actor = await createTestAgent('item-weapon')
-          try {
-            await waitForActorBootstrap(actor)
-            const weapon = await addCompendiumItemToActor(
+          const weapon = await addCompendiumItemToActor(
+            actor,
+            'deltagreen.firearms'
+          )
+          const { DGPercentileRoll } = await importDgRolls()
+          await setWeaponCustomRollTarget(weapon, 50)
+          const roll = await evaluatePercentileRoll(
+            DGPercentileRoll,
+            {
+              rollType: 'weapon',
+              key: 'custom',
               actor,
-              'deltagreen.firearms'
-            )
-            const { DGPercentileRoll } = await importDgRolls()
-            await setWeaponCustomRollTarget(weapon, 50)
-            const roll = await evaluatePercentileRoll(
-              DGPercentileRoll,
-              {
-                rollType: 'weapon',
-                key: 'custom',
-                actor,
-                item: weapon
-              },
-              20
-            )
-            assert.isTrue(roll.isSuccess)
-          } finally {
-            await deleteTestActor(actor)
-          }
+              item: weapon
+            },
+            20
+          )
+          assert.isTrue(roll.isSuccess)
         })
 
         it('armor protection applies when equipped', async function () {
           if (!packAvailable('deltagreen.armor')) this.skip()
-          const actor = await createTestAgent('item-armor')
-          try {
-            await waitForActorBootstrap(actor)
-            const armor = await addCompendiumItemToActor(
-              actor,
-              'deltagreen.armor'
-            )
-            await armor.update({ 'system.equipped': true })
-            actor.reset()
-            assert.isAtLeast(actor.system.health.protection, 0)
-          } finally {
-            await deleteTestActor(actor)
-          }
+          const armor = await addCompendiumItemToActor(
+            actor,
+            'deltagreen.armor'
+          )
+          await armor.update({ 'system.equipped': true })
+          actor.reset()
+          assert.isAtLeast(actor.system.health.protection, 0)
         })
 
         it('bond score updates on damage', async function () {
-          const actor = await createTestAgent('item-bond')
-          try {
-            await waitForActorBootstrap(actor)
-            const bond = await addBondToActor(actor)
-            await bond.update({
-              'system.score': 7,
-              'system.hasBeenDamagedSinceLastHomeScene': true
-            })
-            assert.equal(bond.system.score, 7)
-            assert.isTrue(bond.system.hasBeenDamagedSinceLastHomeScene)
-          } finally {
-            await deleteTestActor(actor)
-          }
+          const bond = await addBondToActor(actor)
+          await bond.update({
+            'system.score': 7,
+            'system.hasBeenDamagedSinceLastHomeScene': true
+          })
+          assert.equal(bond.system.score, 7)
+          assert.isTrue(bond.system.hasBeenDamagedSinceLastHomeScene)
         })
 
         it('gear description persists', async function () {
@@ -95,41 +101,35 @@ export default function register (quench) {
         })
 
         it('motivation transfer AE activates on acute episode', async function () {
-          const actor = await createTestAgent('item-motivation')
-          try {
-            await waitForActorBootstrap(actor)
-            const [motivation] = await actor.createEmbeddedDocuments('Item', [
-              {
-                name: 'Disorder',
-                type: 'motivation',
-                system: { acuteEpisode: false }
-              }
-            ])
-            const documentClass = foundry.utils.getDocumentClass('ActiveEffect')
-            const effect = await documentClass.create(
-              {
-                name: 'Disorder AE',
-                img: 'icons/svg/aura.svg',
-                transfer: true,
-                disabled: false,
-                changes: [
-                  {
-                    key: 'system.rollTarget.allSkills',
-                    type: 'add',
-                    value: '-5',
-                    phase: 'final',
-                    priority: 20
-                  }
-                ]
-              },
-              { parent: motivation }
-            )
-            assert.isTrue(effect.isSuppressed)
-            await motivation.update({ 'system.acuteEpisode': true })
-            assert.isFalse(effect.isSuppressed)
-          } finally {
-            await deleteTestActor(actor)
-          }
+          const [motivation] = await actor.createEmbeddedDocuments('Item', [
+            {
+              name: 'Disorder',
+              type: 'motivation',
+              system: { acuteEpisode: false }
+            }
+          ])
+          const documentClass = foundry.utils.getDocumentClass('ActiveEffect')
+          const effect = await documentClass.create(
+            {
+              name: 'Disorder AE',
+              img: 'icons/svg/aura.svg',
+              transfer: true,
+              disabled: false,
+              changes: [
+                {
+                  key: 'system.rollTarget.allSkills',
+                  type: 'add',
+                  value: '-5',
+                  phase: 'final',
+                  priority: 20
+                }
+              ]
+            },
+            { parent: motivation }
+          )
+          assert.isTrue(effect.isSuppressed)
+          await motivation.update({ 'system.acuteEpisode': true })
+          assert.isFalse(effect.isSuppressed)
         })
 
         it('profession compendium item has skill definitions', async function () {
@@ -152,7 +152,6 @@ export default function register (quench) {
         })
 
         it('tome sanity damage roll uses item formulas', async function () {
-          const actor = await createTestAgent('item-tome')
           const tome = await createTestItem('tome', 'functional')
           try {
             await tome.update({
@@ -175,7 +174,6 @@ export default function register (quench) {
             assert.isAtLeast(roll.terms.length, 1)
           } finally {
             await tome.delete()
-            await deleteTestActor(actor)
           }
         })
       })

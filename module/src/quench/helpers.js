@@ -116,7 +116,7 @@ export async function createTestItem (type, label = type) {
   })
 }
 
-const BOOTSTRAP_POLL_MS = 50
+const BOOTSTRAP_POLL_MS = 25
 const BOOTSTRAP_TIMEOUT_MS = 15000
 const CHAT_POLL_MS = 50
 const CHAT_TIMEOUT_MS = 5000
@@ -155,7 +155,7 @@ export async function waitForActorBootstrap (actor) {
  * @param {object} [options]
  * @param {number} [options.ms]
  */
-export async function settleAgentSideEffects (actor, { ms = 150 } = {}) {
+export async function settleAgentSideEffects (actor, { ms = 50 } = {}) {
   if (!game.actors.get(actor?.id)) return
   await new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -169,7 +169,10 @@ export async function deleteTestActor (actor) {
   await waitForActorBootstrap(actor)
   const current = game.actors.get(actor.id)
   if (!current) return
-  await current.delete()
+  await settleAgentSideEffects(current)
+  const stillThere = game.actors.get(actor.id)
+  if (!stillThere) return
+  await stillThere.delete()
 }
 
 /**
