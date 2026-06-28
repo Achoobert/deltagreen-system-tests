@@ -4,7 +4,8 @@ import {
   createTestNpc,
   dgImport,
   evaluatePercentileRoll,
-  importDgRolls
+  importDgRolls,
+  useQuenchTimeout
 } from '../helpers.js'
 
 /** GitHub #296 — same update shape as DGAgentSheet._resetBreakingPoint */
@@ -38,6 +39,8 @@ export default function register(quench) {
       const { describe, it, assert } = context
 
       describe('Closed issue regressions', function () {
+        useQuenchTimeout(this)
+
         it('GitHub #359 NPC profession persists via actor.update', async function () {
           const actor = await createTestNpc('profession')
           const value = 'Quench NPC Profession'

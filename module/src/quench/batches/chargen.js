@@ -1,4 +1,4 @@
-import { createTestAgent, dgImport } from '../helpers.js'
+import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -7,6 +7,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Character creation commit path', function () {
+        useQuenchTimeout(this)
+
         it('applyCharacterCreationPayload sets skills bonds and profession', async function () {
           const actor = await createTestAgent('chargen')
           try {

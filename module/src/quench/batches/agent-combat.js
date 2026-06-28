@@ -4,7 +4,8 @@ import {
   createTestAgent,
   evaluatePercentileRoll,
   importDgRolls,
-  setWeaponCustomRollTarget
+  setWeaponCustomRollTarget,
+  useQuenchTimeout
 } from '../helpers.js'
 
 export default function register (quench) {
@@ -14,6 +15,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Combat and armor', function () {
+        useQuenchTimeout(this)
+
         it('perform attack', async function () {
           const actor = await createTestAgent('attack')
           try {

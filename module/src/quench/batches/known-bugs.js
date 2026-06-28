@@ -1,5 +1,5 @@
 /* global game */
-import { createTestUnnatural } from '../helpers.js'
+import { createTestUnnatural, useQuenchTimeout } from '../helpers.js'
 import {
   parseAttackLinesFromStatBlock,
   unarmedCombatRatingFromStatBlock
@@ -23,6 +23,8 @@ export default function register(quench) {
       const { describe, it, assert } = context
 
       describe('Open issues (expected to fail until system fix)', function () {
+        useQuenchTimeout(this)
+
         it('GitHub #388 unnatural creature description (shortDescription) persists', async function () {
           const actor = await createTestUnnatural('creature-desc')
           const text = 'Quench creature type description'

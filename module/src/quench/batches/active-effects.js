@@ -1,7 +1,8 @@
 import {
   createActorEmbeddedEffect,
   createTestAgent,
-  dgImport
+  dgImport,
+  useQuenchTimeout
 } from '../helpers.js'
 
 export default function register (quench) {
@@ -11,6 +12,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Active Effects', function () {
+        useQuenchTimeout(this)
+
         it('roll-target AE changes skill roll modifier', async function () {
           const actor = await createTestAgent('ae-roll-target')
           try {

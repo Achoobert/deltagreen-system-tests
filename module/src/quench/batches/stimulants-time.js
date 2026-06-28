@@ -1,5 +1,5 @@
 /* global game */
-import { createTestAgent, dgImport } from '../helpers.js'
+import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -8,6 +8,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Stimulant duration', function () {
+        useQuenchTimeout(this)
+
         it('stimulant AE expires after world time advances', async function () {
           if (!game.user.isActiveGM) {
             this.skip()

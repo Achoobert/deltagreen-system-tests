@@ -2,7 +2,8 @@ import {
   createTestAgent,
   dgImport,
   getExhaustionEffect,
-  importDgRolls
+  importDgRolls,
+  useQuenchTimeout
 } from '../helpers.js'
 
 export default function register (quench) {
@@ -12,6 +13,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Exhaustion, rest, stimulants', function () {
+        useQuenchTimeout(this)
+
         it('exhaustion applies roll penalties via Active Effect', async function () {
           const actor = await createTestAgent('exhaust')
           try {

@@ -1,5 +1,5 @@
 /* global CONFIG, game */
-import { EXPECTED_DG_API_KEYS } from '../helpers.js'
+import { EXPECTED_DG_API_KEYS, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -8,6 +8,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('game.deltagreen', function () {
+        useQuenchTimeout(this)
+
         it('exposes the public system API', function () {
           assert.isObject(game.deltagreen)
           for (const key of EXPECTED_DG_API_KEYS) {

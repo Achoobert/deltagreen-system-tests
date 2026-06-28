@@ -1,5 +1,5 @@
 /* global game */
-import { createTestAgent, dgImport } from '../helpers.js'
+import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -8,6 +8,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Prose / HTML fields', function () {
+        useQuenchTimeout(this)
+
         it('updates and persists physical description', async function () {
           const actor = await createTestAgent('prose')
           const html = '<p>Quench prose test</p>'

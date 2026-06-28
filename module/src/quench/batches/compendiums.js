@@ -4,7 +4,8 @@ import {
   evaluatePercentileRoll,
   importDgRolls,
   requirePack,
-  setWeaponCustomRollTarget
+  setWeaponCustomRollTarget,
+  useQuenchTimeout
 } from '../helpers.js'
 
 export default function register (quench) {
@@ -14,6 +15,8 @@ export default function register (quench) {
       const { describe, it, assert } = context
 
       describe('Compendium imports', function () {
+        useQuenchTimeout(this)
+
         it('imports a firearm and can roll attack', async function () {
           requirePack('deltagreen.firearms')
           const actor = await createTestAgent('comp-firearm')
