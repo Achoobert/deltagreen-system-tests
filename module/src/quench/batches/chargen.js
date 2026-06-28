@@ -1,4 +1,4 @@
-import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
+import { createTestAgent, deleteTestActor, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -27,7 +27,7 @@ export default function register (quench) {
             assert.equal(actor.itemTypes.bond.length, 1)
             assert.equal(actor.itemTypes.bond[0].name, 'Alex')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -48,7 +48,7 @@ export default function register (quench) {
               actor.system.sanity.value
             )
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -75,7 +75,7 @@ export default function register (quench) {
             assert.isOk(match)
             assert.equal(match.proficiency, 80)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

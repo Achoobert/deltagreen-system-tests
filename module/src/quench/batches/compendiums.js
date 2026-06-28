@@ -1,7 +1,9 @@
 import {
   addCompendiumItemToActor,
   createTestAgent,
+  deleteTestActor,
   evaluatePercentileRoll,
+  importCompendiumItem,
   importDgRolls,
   requirePack,
   setWeaponCustomRollTarget,
@@ -42,7 +44,7 @@ export default function register (quench) {
             assert.equal(roll.effectiveTarget, 50)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -59,7 +61,7 @@ export default function register (quench) {
             }
             assert.isAtLeast(actor.system.health.protection, 0)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -75,8 +77,17 @@ export default function register (quench) {
             assert.equal(weapon.type, 'weapon')
             assert.include(weapon.name, 'Unarmed')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
+        })
+
+        it('imports a profession with automatic skills', async function () {
+          if (!game.packs.get('deltagreen.professions')) this.skip()
+          requirePack('deltagreen.professions')
+          const profession = await importCompendiumItem('deltagreen.professions')
+          assert.equal(profession.type, 'profession')
+          const autoKeys = Object.keys(profession.system.automaticSkills ?? {})
+          assert.isAtLeast(autoKeys.length, 1)
         })
       })
     },

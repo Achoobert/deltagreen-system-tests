@@ -1,5 +1,5 @@
 /* global game */
-import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
+import { createTestAgent, deleteTestActor, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -24,7 +24,7 @@ export default function register (quench) {
             const refetched = game.actors.get(actor.id)
             assert.equal(refetched.system.physical.description, html)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -42,7 +42,7 @@ export default function register (quench) {
             )
             assert.include(markup, 'Mirror box')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

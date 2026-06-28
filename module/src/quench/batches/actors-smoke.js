@@ -1,5 +1,4 @@
-/* global Actor */
-import { ACTOR_SMOKE, useQuenchTimeout } from '../helpers.js'
+import { ACTOR_SMOKE, deleteTestActor, useQuenchTimeout, waitForActorBootstrap } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -15,9 +14,10 @@ export default function register (quench) {
             const name = 'Quench ' + spec.type + ' ' + foundry.utils.randomID()
             const actor = await Actor.create({ name, type: spec.type })
             try {
+              await waitForActorBootstrap(actor)
               spec.assert(actor, assert)
             } finally {
-              await actor.delete()
+              await deleteTestActor(actor)
             }
           })
         }

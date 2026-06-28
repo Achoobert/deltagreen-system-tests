@@ -2,6 +2,7 @@ import {
   addCompendiumItemToActor,
   applyManualHpDamage,
   createTestAgent,
+  deleteTestActor,
   evaluatePercentileRoll,
   importDgRolls,
   setWeaponCustomRollTarget,
@@ -40,7 +41,7 @@ export default function register (quench) {
             assert.equal(roll.effectiveTarget, 50)
             assert.isTrue(roll.isSuccess)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -64,7 +65,7 @@ export default function register (quench) {
             await roll.evaluate()
             assert.equal(roll.total, 7)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -86,7 +87,7 @@ export default function register (quench) {
               armor.system.protection
             )
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -109,7 +110,7 @@ export default function register (quench) {
             assert.equal(hpLoss, Math.max(0, 8 - protection))
             assert.equal(actor.system.health.value, maxHp - hpLoss)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -127,7 +128,7 @@ export default function register (quench) {
             assert.equal(hpLoss, Math.max(0, 8 - effective))
             assert.equal(actor.system.health.value, maxHp - hpLoss)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

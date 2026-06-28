@@ -4,6 +4,17 @@
  * Update when the system parser changes.
  */
 
+export const SAMPLE_STAT_BLOCK = `Quench Parser NPC
+Horror from the deep
+STR 12 CON 10 DEX 10 INT 10 POW 10 CHA 10
+HP 12 WP 10 SAN 50
+ACCOUNTING 0
+ALERTNESS 40
+Unarmed 45%
+ATTACKS:
+Claw 50% damage 1D6 ARMOR PIERCING 3
+`
+
 export function getSkillRatingsFromInput(inputText, skill) {
   const matchStr = `(?:${skill}\\n?\\s?\\n?)(\\d\\d?)`
   const re = new RegExp(matchStr, 'i')

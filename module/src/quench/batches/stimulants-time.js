@@ -1,5 +1,5 @@
 /* global game */
-import { createTestAgent, dgImport, useQuenchTimeout } from '../helpers.js'
+import { createTestAgent, deleteTestActor, dgImport, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -29,22 +29,18 @@ export default function register (quench) {
             )?.id
             assert.isOk(stimulantId)
 
-            const expiredStart = game.time.worldTime - 7200
-            await stimulant.update({
-              start: { time: expiredStart },
-              duration: { value: 1, units: 'hours' }
-            })
-            stimulant = actor.effects.get(stimulant.id) ?? stimulant
+            const stimulant = actor.effects.get(stimulantId)
+            assert.isOk(stimulant)
             stimulant.updateDuration()
+            assert.isFalse(
+              stimulant.duration?.expired,
+              'stimulant AE should be active before time advance'
+            )
 
-            let stimulant = actor.effects.get(stimulantId)
-            if (stimulant) {
-              stimulant.updateDuration()
-              assert.isTrue(
-                stimulant.duration?.expired,
-                'stimulant AE should be expired after time advance'
-              )
-            }
+            const calendar = game.time.calendar
+            const advanceSeconds = calendar.componentsToTime({ hour: 2 })
+            await game.time.advance(advanceSeconds)
+            actor.reset()
 
             await pruneExpiredStimulantEffects(actor)
             actor.reset()
@@ -52,9 +48,13 @@ export default function register (quench) {
             const remaining = actor.effects.filter((e) =>
               e.getFlag('deltagreen', 'stimulant')
             )
-            assert.equal(remaining.length, 0)
+            assert.equal(
+              remaining.length,
+              0,
+              'stimulant AE should be pruned after world time advances past duration'
+            )
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

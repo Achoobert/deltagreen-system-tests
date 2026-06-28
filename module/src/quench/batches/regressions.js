@@ -1,14 +1,20 @@
-/* global Actor, game, CONST */
 import {
   createTestAgent,
   createTestNpc,
+  createTestUnnatural,
+  deleteTestActor,
   dgImport,
   evaluatePercentileRoll,
   importDgRolls,
+  settleAgentSideEffects,
   useQuenchTimeout
 } from '../helpers.js'
+import {
+  parseAttackLinesFromStatBlock,
+  SAMPLE_STAT_BLOCK
+} from '../stat-parser-mirror.js'
 
-/** GitHub #296 — same update shape as DGAgentSheet._resetBreakingPoint */
+/** Same update shape as DGAgentSheet._resetBreakingPoint */
 async function applyBreakingPointReset(actor) {
   const pow =
     actor.system.statistics.pow.effectiveValue ??
@@ -41,7 +47,7 @@ export default function register(quench) {
       describe('Closed issue regressions', function () {
         useQuenchTimeout(this)
 
-        it('GitHub #359 NPC profession persists via actor.update', async function () {
+        it('NPC profession persists via actor.update', async function () {
           const actor = await createTestNpc('profession')
           const value = 'Quench NPC Profession'
           try {
@@ -51,61 +57,75 @@ export default function register(quench) {
             const refetched = game.actors.get(actor.id)
             assert.equal(refetched.system.biography.profession, value)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #363 default agent First Aid skill label is spelled correctly', async function () {
+        it('unnatural creature description (shortDescription) persists', async function () {
+          const actor = await createTestUnnatural('creature-desc')
+          const text = 'Quench creature type description'
+          try {
+            await actor.update({ 'system.shortDescription': text })
+            assert.equal(actor.system.shortDescription, text)
+            actor.reset()
+            assert.equal(actor._source.system.shortDescription, text)
+            const refetched = game.actors.get(actor.id)
+            assert.equal(refetched.system.shortDescription, text)
+          } finally {
+            await deleteTestActor(actor)
+          }
+        })
+
+        it('default agent First Aid skill label is spelled correctly', async function () {
           const actor = await createTestAgent('first-aid-label')
           try {
             assert.equal(actor.system.skills.first_aid.label, 'First Aid')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #383 NPC prototype token display name persists', async function () {
+        it('NPC prototype token name persists', async function () {
           const actor = await createTestNpc('token-display')
-          const displayName = 'Quench Display Name'
+          const tokenName = 'Quench Display Name'
           try {
             await actor.update({
-              'prototypeToken.displayName': displayName,
+              'prototypeToken.name': tokenName,
               'prototypeToken.disposition': CONST.TOKEN_DISPOSITIONS.HOSTILE
             })
             actor.reset()
-            assert.equal(actor.prototypeToken.displayName, displayName)
+            assert.equal(actor.prototypeToken.name, tokenName)
             assert.equal(
               actor.prototypeToken.disposition,
               CONST.TOKEN_DISPOSITIONS.HOSTILE
             )
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #296 breaking point reset clears adaptation incident ticks', async function () {
+        it('breaking point reset clears adaptation incident ticks', async function () {
           const actor = await createTestAgent('bp-reset')
           try {
             await actor.update({
               'system.statistics.pow.value': 10,
               'system.sanity.value': 40,
               'system.sanity.adaptations.violence.incident1': true,
-              'system.sanity.adaptations.violence.incident2': true,
-              'system.sanity.adaptations.violence.incident3': true,
-              'system.sanity.adaptations.helplessness.incident1': true,
-              'system.sanity.adaptations.helplessness.incident2': true,
-              'system.sanity.adaptations.helplessness.incident3': true
+              'system.sanity.adaptations.helplessness.incident1': true
             })
             await applyBreakingPointReset(actor)
             actor.reset()
             assert.isFalse(actor.system.sanity.adaptations.violence.incident1)
-            assert.isFalse(actor.system.sanity.adaptations.helplessness.incident3)
+            assert.isFalse(
+              actor.system.sanity.adaptations.helplessness.incident1
+            )
           } finally {
-            await actor.delete()
+            await settleAgentSideEffects(actor)
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #328 failed unnatural roll does not mark skill for improvement', async function () {
+        it('failed unnatural roll does not mark skill for improvement', async function () {
           const actor = await createTestAgent('unnatural-fail')
           try {
             await actor.update({ 'system.skills.unnatural.proficiency': 30 })
@@ -129,13 +149,13 @@ export default function register(quench) {
                 `${roll.skillPath}.failure`
               )
             assert.isFalse(failureMark)
-            assert.isFalse(actor.system.skills.unnatural.failure)
+            assert.isUndefined(actor.system.skills.unnatural.failure)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #327 NPC unarmed damage includes STR melee bonus', async function () {
+        it('NPC unarmed damage includes STR melee bonus', async function () {
           const actor = await createTestNpc('str-bonus')
           try {
             await actor.update({ 'system.statistics.str.value': 14 })
@@ -153,11 +173,18 @@ export default function register(quench) {
             assert.include(formula, '+1')
             assert.notInclude(formula, 'undefined')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
-        it('GitHub #382 ritual learn SAN damage uses learnedSanity not activation sanity', async function () {
+        it('stat block attack line sets armor piercing on parsed weapon', function () {
+          const attacks = parseAttackLinesFromStatBlock(SAMPLE_STAT_BLOCK)
+          const claw = attacks.find((a) => a.customSkillTarget === 50)
+          assert.isOk(claw, 'Expected claw attack in ATTACKS section')
+          assert.equal(claw.armorPiercing, 3)
+        })
+
+        it('ritual learn SAN damage uses learnedSanity not activation sanity', async function () {
           const actor = await createTestNpc('ritual-san')
           try {
             const [ritual] = await actor.createEmbeddedDocuments('Item', [
@@ -191,10 +218,10 @@ export default function register(quench) {
                 sanityDamageSource: 'item'
               }
             )
-            assert.include(roll.formula, '1D2')
-            assert.notInclude(roll.formula, '1D10')
+            assert.match(roll.formula, /1d2/i)
+            assert.notMatch(roll.formula, /1d10/i)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })

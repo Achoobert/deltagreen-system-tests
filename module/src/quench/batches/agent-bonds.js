@@ -1,4 +1,4 @@
-import { addBondToActor, bondScoreFromActor, createTestAgent, useQuenchTimeout } from '../helpers.js'
+import { addBondToActor, bondScoreFromActor, createTestAgent, deleteTestActor, useQuenchTimeout } from '../helpers.js'
 
 export default function register (quench) {
   quench.registerBatch(
@@ -19,7 +19,7 @@ export default function register (quench) {
             assert.equal(bond.system.score, bondScoreFromActor(actor))
             assert.equal(bond.system.relationship, 'friend')
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -34,7 +34,7 @@ export default function register (quench) {
             assert.equal(bond.system.score, 8)
             assert.isTrue(bond.system.hasBeenDamagedSinceLastHomeScene)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
 
@@ -46,7 +46,7 @@ export default function register (quench) {
             await actor.deleteEmbeddedDocuments('Item', [bond.id])
             assert.equal(actor.itemTypes.bond.length, 0)
           } finally {
-            await actor.delete()
+            await deleteTestActor(actor)
           }
         })
       })
