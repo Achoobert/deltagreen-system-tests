@@ -8,6 +8,7 @@ import registerActiveEffects from './quench/batches/active-effects.js'
 import registerPhysical from './quench/batches/physical.js'
 import registerProse from './quench/batches/prose.js'
 import registerChargen from './quench/batches/chargen.js'
+import registerStatSetup from './quench/batches/stat-setup.js'
 import registerChargenFlow from './quench/batches/chargen-flow.js'
 import registerCompendiums from './quench/batches/compendiums.js'
 import registerStimulantsTime from './quench/batches/stimulants-time.js'
@@ -30,6 +31,7 @@ const BATCH_REGISTRARS = [
   registerPhysical,
   registerProse,
   registerChargen,
+  registerStatSetup,
   registerChargenFlow,
   registerCompendiums,
   registerStimulantsTime,

@@ -1,4 +1,5 @@
 import {
+  applyStimulantDoseSinceRest,
   createTestAgent,
   deleteTestActor,
   dgImport,
@@ -65,6 +66,7 @@ export default function register (quench) {
             await actor.update({
               'system.physical.exhausted': false,
               'system.physical.suppressExhaustion': false,
+              'system.physical.stimulantDosesSinceRest': 0,
               'system.wp.value': Math.min(maxWp, 2 + 4)
             })
             await syncExhaustionEffect(actor)
@@ -73,6 +75,7 @@ export default function register (quench) {
             assert.isFalse(actor.system.physical.exhausted)
             assert.isNotOk(getExhaustionEffect(actor))
             assert.equal(actor.system.wp.value, Math.min(maxWp, 6))
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 0)
           } finally {
             await deleteTestActor(actor)
           }
@@ -100,6 +103,59 @@ export default function register (quench) {
             assert.isTrue(getEffectiveSuppressExhaustion(actor))
             const exhaustion = getExhaustionEffect(actor)
             assert.isTrue(exhaustion?.disabled)
+          } finally {
+            await deleteTestActor(actor)
+          }
+        })
+
+        it('first stimulant dose increments counter without WP loss', async function () {
+          const actor = await createTestAgent('stim-first-dose')
+          try {
+            const startWp = actor.system.wp.value
+            const result = await applyStimulantDoseSinceRest(actor, 3)
+            assert.isFalse(result.isRepeatDose)
+            assert.equal(result.doses, 1)
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 1)
+            assert.equal(actor.system.wp.value, startWp)
+          } finally {
+            await deleteTestActor(actor)
+          }
+        })
+
+        it('repeat stimulant dose since rest reduces WP', async function () {
+          const actor = await createTestAgent('stim-repeat-dose')
+          try {
+            await actor.update({ 'system.wp.value': 10 })
+            await applyStimulantDoseSinceRest(actor, 2)
+            const result = await applyStimulantDoseSinceRest(actor, 4, {
+              wpRollTotal: 3
+            })
+            assert.isTrue(result.isRepeatDose)
+            assert.equal(result.doses, 2)
+            assert.equal(result.wpLoss, 3)
+            assert.equal(actor.system.wp.value, 7)
+          } finally {
+            await deleteTestActor(actor)
+          }
+        })
+
+        it('dose counter persists after stimulant effect expires without rest', async function () {
+          const actor = await createTestAgent('stim-dose-persist')
+          try {
+            const { clearStimulantEffects } = await dgImport(
+              '/systems/deltagreen/module/active-effect/runtime/stimulant-effect.js'
+            )
+            await applyStimulantDoseSinceRest(actor, 2)
+            await applyStimulantDoseSinceRest(actor, 3, { wpRollTotal: 1 })
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 2)
+
+            await clearStimulantEffects(actor)
+            actor.reset()
+
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 2)
+            assert.isEmpty(
+              actor.effects.filter((e) => e.getFlag('deltagreen', 'stimulant'))
+            )
           } finally {
             await deleteTestActor(actor)
           }

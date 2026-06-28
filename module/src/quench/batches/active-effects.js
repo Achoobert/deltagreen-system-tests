@@ -2,7 +2,8 @@ import {
   createActorEmbeddedEffect,
   createTestAgent,
   deleteTestActor,
-  dgImport
+  dgImport,
+  useQuenchTimeout
 } from '../helpers.js'
 
 export default function register (quench) {
@@ -108,6 +109,25 @@ export default function register (quench) {
             await motivation.update({ 'system.acuteEpisode': true })
             assert.isFalse(effect.isSuppressed)
           } finally {
+            await deleteTestActor(actor)
+          }
+        })
+
+        it('agent sheet exposes canManageEffects on effects tab context', async function () {
+          useQuenchTimeout(this)
+          const actor = await createTestAgent('ae-manage')
+          try {
+            await actor.sheet.render(true)
+            const context = await actor.sheet._prepareContext({})
+            assert.isTrue(
+              context.canManageEffects,
+              'editable owner should manage embedded Active Effects'
+            )
+            assert.isObject(context.sheetEffects)
+            assert.isArray(context.sheetEffects.temporary)
+            assert.isArray(context.sheetEffects.permanent)
+          } finally {
+            await actor.sheet.close()
             await deleteTestActor(actor)
           }
         })

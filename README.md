@@ -50,8 +50,8 @@ running `pnpm run tests`:
 | `deltagreen.agent.bonds` | Add / damage / remove bonds |
 | `deltagreen.agent.combat` | Attacks, damage, armor (compendium gear) |
 | `deltagreen.rolls` | Skill, weapon, modified, luck rolls |
-| `deltagreen.activeEffects` | Roll targets, max HP, motivation AE |
-| `deltagreen.physical` | Exhaustion, rest, stimulants |
+| `deltagreen.activeEffects` | Roll targets, max HP, motivation AE, agent sheet `canManageEffects` |
+| `deltagreen.physical` | Exhaustion, rest, stimulants, repeat-dose WP loss (`stimulantDosesSinceRest`) |
 | `deltagreen.prose` | HTML / ProseMirror persistence |
 | `deltagreen.chargen` | Programmatic character creation commit |
 | `deltagreen.chargen.flow` | Profession assignment via compendium + commit path |
