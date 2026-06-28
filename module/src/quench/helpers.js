@@ -484,32 +484,18 @@ export function getExhaustionEffect (actor) {
 }
 
 /**
- * Mirrors DGAgentSheet._takeStimulants dose counter and WP loss (no dialog or chat).
+ * Delegates to the system stimulant dose helper (no dialog or chat).
  * @param {Actor} actor
  * @param {number} hours
  * @param {object} [options]
  * @param {number} [options.wpRollTotal] Fixed WP loss on repeat dose; otherwise rolls 1d6.
- * @returns {Promise<{ isRepeatDose: boolean, newWp: number, doses: number, wpLoss: number }>}
+ * @returns {Promise<{ isRepeatDose: boolean, newWp: number, doses: number, wpLoss: number, appliedHours: number, wpRoll: Roll|null }>}
  */
 export async function applyStimulantDoseSinceRest (actor, hours, options = {}) {
-  const { applyStimulantEffect } = await dgImport(
+  const { applyStimulantDoseSinceRest: applyDose } = await dgImport(
     '/systems/deltagreen/module/active-effect/runtime/stimulant-effect.js'
   )
-  const doses = Number(actor.system.physical.stimulantDosesSinceRest) || 0
-  const isRepeatDose = doses > 0
-  const currentWp = Number(actor.system.wp.value) || 0
-  let wpLoss = 0
-  let newWp = currentWp
-  if (isRepeatDose) {
-    const Roll = foundry.dice.Roll
-    wpLoss =
-      options.wpRollTotal ?? (await new Roll('1d6').evaluate()).total
-    newWp = Math.max(0, currentWp - wpLoss)
-  }
-  await applyStimulantEffect(actor, hours)
-  const updateData = { 'system.physical.stimulantDosesSinceRest': doses + 1 }
-  if (isRepeatDose) updateData['system.wp.value'] = newWp
-  await actor.update(updateData)
+  const result = await applyDose(actor, hours, options)
   actor.reset()
-  return { isRepeatDose, newWp, doses: doses + 1, wpLoss }
+  return result
 }

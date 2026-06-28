@@ -160,6 +160,35 @@ export default function register (quench) {
             await deleteTestActor(actor)
           }
         })
+
+        it('repeat dose charges WP when stimulant AE exists but counter is zero', async function () {
+          const actor = await createTestAgent('stim-migration-dose')
+          try {
+            const { applyStimulantEffect, hasActiveStimulantEffect } =
+              await dgImport(
+                '/systems/deltagreen/module/active-effect/runtime/stimulant-effect.js'
+              )
+            await actor.update({
+              'system.physical.stimulantDosesSinceRest': 0,
+              'system.wp.value': 10
+            })
+            await applyStimulantEffect(actor, 2)
+            actor.reset()
+
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 0)
+            assert.isTrue(hasActiveStimulantEffect(actor))
+
+            const result = await applyStimulantDoseSinceRest(actor, 3, {
+              wpRollTotal: 4
+            })
+            assert.isTrue(result.isRepeatDose)
+            assert.equal(result.wpLoss, 4)
+            assert.equal(actor.system.wp.value, 6)
+            assert.equal(actor.system.physical.stimulantDosesSinceRest, 1)
+          } finally {
+            await deleteTestActor(actor)
+          }
+        })
       })
     },
     { displayName: 'Physical: exhaustion & stimulants', preSelected: false }
